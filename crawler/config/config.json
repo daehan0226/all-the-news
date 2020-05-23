@@ -1,0 +1,12 @@
+{
+  "driver_path": "./driver/chromedriver.exe",
+  "log_dir": "./logs/",
+  "log_filename": "crawl_log",
+  "sites": [
+    ["bbc", "https://www.bbc.com/news"],
+    ["cnn",  "https://edition.cnn.com"],
+    ["npr", "https://www.npr.org"],
+    ["koreatimes", "https://www.koreatimes.co.kr/www2/index.asp"],
+    ["koreaherald", "http://www.koreaherald.com"]
+  ]
+}
