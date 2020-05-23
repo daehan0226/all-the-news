@@ -1,0 +1,18 @@
+
+# env
+venv
+
+
+# driver
+driver
+
+
+# logs
+logs
+debug.log
+
+#
+.idea
+
+#
+__pycahe__
