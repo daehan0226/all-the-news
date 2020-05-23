@@ -2,6 +2,8 @@
   "driver_path": "./driver/chromedriver.exe",
   "log_dir": "./logs/",
   "log_filename": "crawl_log",
+  "es_host": "192.168.99.100",
+  "es_port": "9200",
   "sites": [
     ["bbc", "https://www.bbc.com/news"],
     ["cnn",  "https://edition.cnn.com"],

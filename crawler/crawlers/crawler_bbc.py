@@ -5,10 +5,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 class Crawler_bbc:
-    def __init__(self, driver, wait, logging, url):
+    def __init__(self, driver, wait, logging, es, url):
         self.driver = driver
         self.wait = wait
         self.logging = logging
+        self.es = es
         self.url = url
 
     def parse(self):
@@ -43,8 +44,11 @@ class Crawler_bbc:
                 text += paragraph.get_attribute('textContent').strip()
 
             story["text"] = text
+            story["site"] = "bbc"
+            doc_id = story["url"].split('/')[-1]
 
-            print('es에 저장', story)
+            result = self.es.insert_doc("news", "docs", doc_id, story)
+            self.logging.debug("insert new doc to es, doc_id : " + result)
 
         except Exception as e:
             _, _, tb = sys.exc_info()
@@ -96,7 +100,7 @@ class Crawler_bbc:
             if len(story_data) == 0:
                 self.logging.error("no top stories : " + self.url)
             else:
-                self.logging.info("insert tpop story data, story count : " + str(len(story_data)))
+                self.logging.info("insert top story data, story count : " + str(len(story_data)))
 
         except Exception as e:
             _, _, tb = sys.exc_info()

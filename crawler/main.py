@@ -8,6 +8,7 @@ from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
+from libs.elasticsearch_wrapper import ElasticsearchWrapper
 from crawlers.crawler_bbc import Crawler_bbc
 from crawlers.crawler_cnn import Crawler_cnn
 
@@ -20,23 +21,25 @@ class Crawler:
         self.config = config
         self.logging = logging
         self.wait = None
+        self.es = None
 
     def run(self):
         CHROME_PATH = self.config["driver_path"]
         self.driver = webdriver.Chrome(executable_path=CHROME_PATH)
         self.wait = WebDriverWait(self.driver, 15)
+        self.es = ElasticsearchWrapper(self.config["es_host"], self.config["es_port"])
 
         for site in self.config["sites"]:
             start_time = time.time()
             self.logging.info("parsing started for this site, " + site[0])
 
             if site[0] == "bbc":
-                cralwer = Crawler_bbc(self.driver, self.wait, self.logging, site[1])
+                cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site[1])
                 cralwer.parse()
                 end_time = time.time()
 
             if site[0] == "cnn":
-                cralwer = Crawler_cnn(self.driver, self.wait, self.logging, site[1])
+                cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site[1])
                 cralwer.parse()
                 end_time = time.time()
 
