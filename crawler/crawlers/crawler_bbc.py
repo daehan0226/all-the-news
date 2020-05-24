@@ -5,29 +5,34 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 class Crawler_bbc:
-    def __init__(self, driver, wait, logging, es, url):
+    def __init__(self, driver, wait, logging, es, site):
         self.driver = driver
         self.wait = wait
         self.logging = logging
         self.es = es
-        self.url = url
+        self.url = site[1]
+        self.categories = site[2]
 
     def parse(self):
-        self.logging.debug("parsing started from this url : " + self.url)
-        self.driver.get(self.url)
-        time.sleep(uniform(1, 2))
-        stories = []
+        for category in self.categories:
+            parse_url = self.url + category
+            self.logging.debug("parsing started from this url : " + parse_url)
+            self.driver.get(parse_url)
+            time.sleep(uniform(1, 2))
 
-        start_time = time.time()
-        stories.extend(self.get_story_data())
-        end_time = time.time()
-        self.logging.info("parsing title, summary of top stories takes : " + str(end_time - start_time))
+            stories = []
 
-        for story in stories:
             start_time = time.time()
-            self.get_story_text(story)
+            stories.extend(self.get_story_data())
             end_time = time.time()
-            self.logging.info("parsing text of the story takes : " + str(end_time - start_time) + "story url : " + story["url"])
+            self.logging.info("parsing title, summary of top stories takes : " + str(end_time - start_time))
+
+            for story in stories:
+                story["category"] = category or "top"
+                start_time = time.time()
+                self.get_story_text(story)
+                end_time = time.time()
+                self.logging.info("parsing text of the story takes : " + str(end_time - start_time) + "story url : " + story["url"])
 
     def get_story_text(self, story):
         self.driver.get(story["url"])
@@ -45,6 +50,7 @@ class Crawler_bbc:
 
             story["text"] = text
             story["site"] = "bbc"
+            story["crawled_at"] = time.time()
             doc_id = story["url"].split('/')[-1]
 
             result = self.es.insert_doc("news", "docs", doc_id, story)
@@ -60,7 +66,7 @@ class Crawler_bbc:
         try:
             top_story_container = self.wait.until(EC.presence_of_all_elements_located((
                 By.CSS_SELECTOR,
-                 'div#news-top-stories-container'
+                 'div#site-container'
             )))
 
             time.sleep(uniform(1, 2))

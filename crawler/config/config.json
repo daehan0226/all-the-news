@@ -5,7 +5,22 @@
   "es_host": "192.168.99.100",
   "es_port": "9200",
   "sites": [
-    ["bbc", "https://www.bbc.com/news"],
+    [
+      "bbc",
+      "https://www.bbc.com/news/",
+      [
+        "",
+        "coronavirus",
+        "world",
+        "asia",
+        "uk",
+        "business",
+        "technology",
+        "science_and_environment",
+        "stories",
+        "entertainment_and_arts",
+        "health"
+      ]],
     ["cnn",  "https://edition.cnn.com"],
     ["npr", "https://www.npr.org"],
     ["koreatimes", "https://www.koreatimes.co.kr/www2/index.asp"],
