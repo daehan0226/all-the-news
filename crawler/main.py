@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from libs.elasticsearch_wrapper import ElasticsearchWrapper
 from crawlers.crawler_bbc import Crawler_bbc
 from crawlers.crawler_cnn import Crawler_cnn
+from crawlers.crawler_koreaTimes import Crawler_koreanTimes
 
 json_config = open("./config/config.json").read()
 config = simplejson.loads(json_config)
@@ -60,16 +61,19 @@ class Crawler:
             start_time = time.time()
             self.logging.info("parsing started for this site, " + site[0])
 
-            if site[0] == "bbc":
-                cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site)
-                cralwer.parse()
-                end_time = time.time()
+            # if site[0] == "bbc":
+            #     cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
 
-            if site[0] == "cnn":
-                cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
+            # if site[0] == "cnn":
+            #     cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
+            
+            if site[0] == "koreatimes":
+                cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)
                 cralwer.parse()
-                end_time = time.time()
-
+            
+            end_time = time.time()
             self.logging.debug("parsing finished, parsing time : " + str(end_time - start_time))
 
     def set_logger(self):

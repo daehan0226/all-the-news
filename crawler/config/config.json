@@ -9,7 +9,6 @@
       "bbc",
       "https://www.bbc.com/news/",
       [
-        "",
         "coronavirus",
         "world",
         "asia",
@@ -20,10 +19,34 @@
         "stories",
         "entertainment_and_arts",
         "health"
-      ]],
-    ["cnn",  "https://edition.cnn.com"],
+      ]
+    ],
+    [
+      "cnn",  
+      "https://edition.cnn.com",
+      [
+        "world",
+        "asia",
+        "politics",
+        "business",
+        "business/tech",
+        "health",
+        "entertainment",
+        "style",
+        "travel",
+        "sports"
+      ]
+    ],
     ["npr", "https://www.npr.org"],
-    ["koreatimes", "https://www.koreatimes.co.kr/www2/index.asp"],
+    [
+      "koreatimes",
+      [
+        [
+          "biz & tech",
+          "sublist_129_1"
+        ]
+      ]
+    ],
     ["koreaherald", "http://www.koreaherald.com"]
   ]
 }
