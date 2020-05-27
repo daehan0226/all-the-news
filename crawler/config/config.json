@@ -1,52 +1,54 @@
 {
-  "driver_path": "./driver/chromedriver.exe",
-  "log_dir": "./logs/",
-  "log_filename": "crawl_log",
-  "es_host": "192.168.99.100",
-  "es_port": "9200",
-  "sites": [
-    [
-      "bbc",
-      "https://www.bbc.com/news/",
-      [
-        "coronavirus",
-        "world",
-        "asia",
-        "uk",
-        "business",
-        "technology",
-        "science_and_environment",
-        "stories",
-        "entertainment_and_arts",
-        "health"
-      ]
-    ],
-    [
-      "cnn",  
-      "https://edition.cnn.com",
-      [
-        "world",
-        "asia",
-        "politics",
-        "business",
-        "business/tech",
-        "health",
-        "entertainment",
-        "style",
-        "travel",
-        "sports"
-      ]
-    ],
-    ["npr", "https://www.npr.org"],
-    [
-      "koreatimes",
-      [
+    "driver_path": "./driver/chromedriver.exe",
+    "log_dir": "./logs/",
+    "log_filename": "crawl_log",
+    "es_host": "192.168.99.100",
+    "es_port": "9200",
+    "sites": [
         [
-          "biz & tech",
-          "sublist_129_1"
-        ]
-      ]
-    ],
-    ["koreaherald", "http://www.koreaherald.com"]
-  ]
+            "bbc",
+            "https://www.bbc.com/news/",
+            [
+                "coronavirus",
+                "world",
+                "asia",
+                "uk",
+                "business",
+                "technology",
+                "science_and_environment",
+                "stories",
+                "entertainment_and_arts",
+                "health"
+            ]
+        ],
+        [
+            "cnn",
+            "https://edition.cnn.com",
+            [
+                "world",
+                "asia",
+                "politics",
+                "business",
+                "business/tech",
+                "health",
+                "entertainment",
+                "style",
+                "travel",
+                "sports"
+            ]
+        ],
+        ["npr", "https://www.npr.org"],
+        [
+            "koreatimes",
+            [
+                ["biz & tech", "sublist_129"],
+                ["entertainment", "sublist_398"],
+                ["world", "sublist_501"],
+                ["national", "sublist_113"],
+                ["north korea", "sublist_103"],
+                ["finance", "sublist_602"]
+            ]
+        ],
+        ["koreaherald", "http://www.koreaherald.com"]
+    ]
 }
