@@ -15,4 +15,5 @@ libs
 .idea
 
 #
-__pycahe__
+_pycahe_
+*.pyc
