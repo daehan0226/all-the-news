@@ -37,7 +37,19 @@
                 "sports"
             ]
         ],
-        ["npr", "https://www.npr.org"],
+        [
+            "npr",
+            "https://www.npr.org/sections/",
+            [
+                "national",
+                "world",
+                "politics",
+                "business",
+                "technology",
+                "science",
+                "health"
+            ]
+        ],
         [
             "koreatimes",
             [
