@@ -59,8 +59,16 @@ class Crawler_koreanTimes:
             )
 
             for paragraph in paragraphs:
-                text += paragraph.get_attribute('textContent').strip()
+                try:
+                    text += paragraph.get_attribute('textContent').strip()
+                except:
+                    print("this element does not have text")   
 
+        except Exception as e:
+            _, _, tb = sys.exc_info()
+            self.logging.error(f'parse article excpet from url : {url},  {tb.tb_lineno},  {e.__str__()}')
+
+        if title and text:
             article = {
                 "site" : "koreaTimes",
                 "url" : url,
@@ -75,10 +83,8 @@ class Crawler_koreanTimes:
 
             # result = self.es.insert_doc("news", "docs", doc_id, article)
             # self.logging.debug("insert new doc to es, doc_id : " + result)
-
-        except Exception as e:
-            _, _, tb = sys.exc_info()
-            self.logging.error(f'parse article excpet from url : {url},  {tb.tb_lineno},  {e.__str__()}')
+        else:
+            self.logging.error(f'fail to parse article data from this url, {url}')
 
 
     def get_news_urls(self):
