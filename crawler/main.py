@@ -12,6 +12,7 @@ from libs.elasticsearch_wrapper import ElasticsearchWrapper
 from crawlers.crawler_bbc import Crawler_bbc
 from crawlers.crawler_cnn import Crawler_cnn
 from crawlers.crawler_koreaTimes import Crawler_koreanTimes
+from crawlers.crawler_npr import Crawler_npr
 
 json_config = open("./config/config.json").read()
 config = simplejson.loads(json_config)
@@ -69,8 +70,12 @@ class Crawler:
             #     cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
             #     cralwer.parse()
             
-            if site[0] == "koreatimes":
-                cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)
+            # if site[0] == "koreatimes":
+            #     cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
+
+            if site[0] == "npr":
+                cralwer = Crawler_npr(self.driver, self.wait, self.logging, self.es, site)
                 cralwer.parse()
             
             end_time = time.time()
