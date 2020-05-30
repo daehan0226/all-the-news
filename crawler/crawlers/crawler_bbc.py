@@ -48,12 +48,21 @@ class Crawler_bbc:
             for paragraph in paragraphs:
                 text += paragraph.get_attribute('textContent').strip()
 
+                
+            date = self.driver.find_element(
+                By.CSS_SELECTOR,
+                'li.mini-info-list__item > div'
+            ).get_attribute("data-seconds")
+        
+
             story["text"] = text
             story["site"] = "bbc"
             story["crawled_at"] = time.time()
+            story["published_at"] = date
             doc_id = story["url"].split('/')[-1]
 
-            result = self.es.insert_doc("news", "docs", doc_id, story)
+            print(story)
+            # result = self.es.insert_doc("news", "docs", doc_id, story)
             self.logging.debug("insert new doc to es, doc_id : " + result)
 
         except Exception as e:
@@ -101,7 +110,8 @@ class Crawler_bbc:
                             "url": url
                         })
                     except:
-                        print('not title, text tag in story container')
+                        # print('not title, text tag in story container')
+                        continue
 
             if len(story_data) == 0:
                 self.logging.error("no top stories : " + self.url)

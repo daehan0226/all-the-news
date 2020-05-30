@@ -10,14 +10,15 @@ class Crawler_koreanTimes:
         self.wait = wait
         self.logging = logging
         self.es = es
-        self.categories = site[1]
+        self.url = site[1]
+        self.categories = site[2]
 
     def parse(self):
         for category in self.categories:
             try:
                 page = 1
                 while True:
-                    current_page = f"https://www.koreatimes.co.kr/www/{category[1]}_{page}.html"
+                    current_page = f"{self.url}{category[1]}_{page}.html"
                     self.logging.info(f"current article list page : {current_page}")
 
                     time.sleep(uniform(1, 2))
@@ -42,21 +43,28 @@ class Crawler_koreanTimes:
         self.driver.get(url)
         time.sleep(uniform(1, 2))
 
-        news_content = self.wait.until(EC.presence_of_all_elements_located((
+        news_content = self.wait.until(EC.presence_of_element_located((
                 By.CSS_SELECTOR,
                 'div.all_section'
             )))
         
         try:
-            title = self.driver.find_element(
+            title = news_content.find_element(
                 By.CSS_SELECTOR,
                 'div.view_headline'
             ).get_attribute('textContent').strip()
 
-            paragraphs = self.driver.find_elements(
+            paragraphs = news_content.find_elements(
                 By.CSS_SELECTOR,
                 'div.view_article > div > div > div#startts > span'
             )
+
+            date = news_content.find_elements(
+                By.CSS_SELECTOR,
+                'div.date_div > div.view_date'
+            )
+
+            date = date[0].get_attribute('textContent').strip().split(": ")[1]
 
             for paragraph in paragraphs:
                 try:
@@ -75,7 +83,8 @@ class Crawler_koreanTimes:
                 "title" : title,
                 "text" : text,
                 "category" :category,
-                "crawled_at" : time.time()
+                "crawled_at" : time.time(),
+                "published_at" : date
             }
 
             doc_id = url

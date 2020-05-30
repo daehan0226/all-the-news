@@ -93,18 +93,24 @@ class Crawler_npr:
         text = ""
 
         try:
-            content = self.wait.until(EC.presence_of_all_elements_located((
+            content = self.wait.until(EC.presence_of_element_located((
                 By.CSS_SELECTOR,
                 'section#main-section > article.story'
             )))
 
             try:
-                title = self.driver.find_element(
+                title = content.find_element(
                     By.CSS_SELECTOR,
                     'div.storytitle > h1'
                 ).get_attribute('textContent').strip()
 
-                paragraphs = self.driver.find_elements(
+                date = content.find_element(
+                    By.CSS_SELECTOR,
+                    'div.dateblock > time'
+                ).get_attribute('datetime')
+
+
+                paragraphs = content.find_elements(
                     By.CSS_SELECTOR,
                     'article.story > div#storytext > p'
                 )
@@ -127,12 +133,14 @@ class Crawler_npr:
                     "title" : title,
                     "text" : text,
                     "category" :category,
+                    "published_at" : date,
                     "crawled_at" : time.time()
                 }
                 doc_id = url
                 
                 
                 self.logging.info(f'parsed article title : {title}')
+                print(article)
                 # result = self.es.insert_doc("news", "docs", doc_id, article)
                 # self.logging.debug("insert new doc to es, doc_id : " + result)
             else:
