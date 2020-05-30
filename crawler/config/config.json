@@ -52,6 +52,7 @@
         ],
         [
             "koreatimes",
+            "https://www.koreatimes.co.kr/www/",
             [
                 ["biz & tech", "sublist_129"],
                 ["entertainment", "sublist_398"],
