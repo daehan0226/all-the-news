@@ -132,17 +132,15 @@ class Crawler_npr:
                     "url" : url,
                     "title" : title,
                     "text" : text,
-                    "category" :category,
+                    "category" : category,
                     "published_at" : date,
                     "crawled_at" : time.time()
                 }
                 doc_id = url
-                
-                
+
                 self.logging.info(f'parsed article title : {title}')
-                print(article)
-                # result = self.es.insert_doc("news", "docs", doc_id, article)
-                # self.logging.debug("insert new doc to es, doc_id : " + result)
+                result = self.es.insert_doc("news", "_doc", doc_id, article)
+                self.logging.debug("insert new doc to es, doc_id : " + result)
             else:
                 self.logging.error(f'fail to parse article data from this url, {url}')
 

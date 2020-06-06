@@ -90,8 +90,8 @@ class Crawler_koreanTimes:
             doc_id = url
             print(doc_id, article)
 
-            # result = self.es.insert_doc("news", "docs", doc_id, article)
-            # self.logging.debug("insert new doc to es, doc_id : " + result)
+            result = self.es.insert_doc("news", "_doc", doc_id, article)
+            self.logging.debug("insert new doc to es, doc_id : " + result)
         else:
             self.logging.error(f'fail to parse article data from this url, {url}')
 

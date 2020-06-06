@@ -56,19 +56,19 @@ class Crawler:
         CHROME_PATH = self.config["driver_path"]
         self.driver = webdriver.Chrome(executable_path=CHROME_PATH, chrome_options=options)
         self.wait = WebDriverWait(self.driver, 15)
-        self.es = ElasticsearchWrapper(self.config["es_host"], self.config["es_port"])
+        self.es = ElasticsearchWrapper(self.config)
 
         for site in self.config["sites"]:
             start_time = time.time()
             self.logging.info("parsing started for this site, " + site[0])
 
-            if site[0] == "bbc":
-                cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site)
-                cralwer.parse()
+            # if site[0] == "bbc":
+            #     cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
 
-            if site[0] == "cnn":
-                cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
-                cralwer.parse()
+            # if site[0] == "cnn":
+            #     cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
             
             if site[0] == "koreatimes":
                 cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)

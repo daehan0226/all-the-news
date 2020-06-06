@@ -2,7 +2,11 @@
     "driver_path": "./driver/chromedriver.exe",
     "log_dir": "./logs/",
     "log_filename": "crawl_log",
-    "es_host": "192.168.99.100",
+    "es_host": "https://460465dd5a774642abb649288b839b3f.ap-northeast-1.aws.found.io:9234",
+    "cloud_id": "all-the-news:YXAtbm9ydGhlYXN0LTEuYXdzLmZvdW5kLmlvJDQ2MDQ2NWRkNWE3NzQ2NDJhYmI2NDkyODhiODM5YjNmJDYxZTBiMDg3YjlmNDQ2MmFiM2M0YjVhMGI0NjhjNWRk",
+    "username": "elastic",
+    "password": "pe5d4r5P9atD7RDhqYyopC5l",
+    "es_host1": "127.0.0.1",
     "es_port": "9200",
     "sites": [
         [
@@ -23,7 +27,7 @@
         ],
         [
             "cnn",
-            "https://edition.cnn.com",
+            "https://edition.cnn.com/",
             [
                 "world",
                 "asia",

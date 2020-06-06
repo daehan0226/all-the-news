@@ -62,7 +62,7 @@ class Crawler_bbc:
             doc_id = story["url"].split('/')[-1]
 
             print(story)
-            # result = self.es.insert_doc("news", "docs", doc_id, story)
+            result = self.es.insert_doc("news", "_doc", doc_id, story)
             self.logging.debug("insert new doc to es, doc_id : " + result)
 
         except Exception as e:
