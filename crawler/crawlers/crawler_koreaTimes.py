@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, datetime
 from random import uniform
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -65,6 +65,8 @@ class Crawler_koreanTimes:
             )
 
             date = date[0].get_attribute('textContent').strip().split(": ")[1]
+            date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M')
+            
 
             for paragraph in paragraphs:
                 try:
@@ -83,14 +85,11 @@ class Crawler_koreanTimes:
                 "title" : title,
                 "text" : text,
                 "category" :category,
-                "crawled_at" : time.time(),
-                "published_at" : date
+                "crawled_at" :  datetime.datetime.now(),
+                "published_at" : date.timestamp()
             }
 
-            doc_id = url
-            print(doc_id, article)
-
-            result = self.es.insert_doc("news", "_doc", doc_id, article)
+            result = self.es.insert_doc("news", article)
             self.logging.debug("insert new doc to es, doc_id : " + result)
         else:
             self.logging.error(f'fail to parse article data from this url, {url}')

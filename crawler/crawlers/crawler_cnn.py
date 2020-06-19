@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, datetime
 from random import uniform
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -50,10 +50,9 @@ class Crawler_cnn:
 
             story["text"] = text
             story["site"] = "bbc"
-            story["crawled_at"] = time.time()
-            doc_id = story["url"].split('/')[-1]
+            story["crawled_at"] = datetime.datetime.now()
 
-            result = self.es.insert_doc("news", "docs", doc_id, story)
+            result = self.es.insert_doc("news",story)
             self.logging.debug("insert new doc to es, doc_id : " + result)
 
         except Exception as e:

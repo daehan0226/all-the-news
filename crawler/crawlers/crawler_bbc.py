@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, datetime
 from random import uniform
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -48,21 +48,18 @@ class Crawler_bbc:
             for paragraph in paragraphs:
                 text += paragraph.get_attribute('textContent').strip()
 
-                
             date = self.driver.find_element(
                 By.CSS_SELECTOR,
                 'li.mini-info-list__item > div'
             ).get_attribute("data-seconds")
         
-
             story["text"] = text
             story["site"] = "bbc"
-            story["crawled_at"] = time.time()
+            story["crawled_at"] = datetime.datetime.now() # time.time()
             story["published_at"] = date
             doc_id = story["url"].split('/')[-1]
 
-            print(story)
-            result = self.es.insert_doc("news", "_doc", doc_id, story)
+            result = self.es.insert_doc("news",story)
             self.logging.debug("insert new doc to es, doc_id : " + result)
 
         except Exception as e:

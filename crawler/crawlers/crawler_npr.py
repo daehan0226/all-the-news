@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, datetime
 from random import uniform
 
 from selenium.webdriver.support import expected_conditions as EC
@@ -134,12 +134,10 @@ class Crawler_npr:
                     "text" : text,
                     "category" : category,
                     "published_at" : date,
-                    "crawled_at" : time.time()
+                    "crawled_at" : datetime.datetime.now(),
                 }
-                doc_id = url
 
-                self.logging.info(f'parsed article title : {title}')
-                result = self.es.insert_doc("news", "_doc", doc_id, article)
+                result = self.es.insert_doc("news", article)
                 self.logging.debug("insert new doc to es, doc_id : " + result)
             else:
                 self.logging.error(f'fail to parse article data from this url, {url}')
