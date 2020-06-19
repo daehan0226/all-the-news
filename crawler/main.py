@@ -1,4 +1,4 @@
-import logging
+import logging, json
 from logging import handlers
 
 import time
@@ -58,6 +58,13 @@ class Crawler:
         self.wait = WebDriverWait(self.driver, 15)
         self.es = ElasticsearchWrapper(self.config)
 
+        news_index = self.config["news"]["index"]
+        mappings = self.config["news"]["mappings"]
+        
+        if not self.es.exist_index(news_index):
+            self.logging.debug(f"index - {news_index} does not exist")
+            self.es.create_index(news_index, mappings)
+
         for site in self.config["sites"]:
             start_time = time.time()
             self.logging.info("parsing started for this site, " + site[0])
@@ -74,9 +81,9 @@ class Crawler:
                 cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)
                 cralwer.parse()
 
-            if site[0] == "npr":
-                cralwer = Crawler_npr(self.driver, self.wait, self.logging, self.es, site)
-                cralwer.parse()
+            # if site[0] == "npr":
+            #     cralwer = Crawler_npr(self.driver, self.wait, self.logging, self.es, site)
+            #     cralwer.parse()
             
             end_time = time.time()
             self.logging.debug("parsing finished, parsing time : " + str(end_time - start_time))
