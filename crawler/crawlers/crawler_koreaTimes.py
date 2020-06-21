@@ -66,7 +66,6 @@ class Crawler_koreanTimes:
 
             date = date[0].get_attribute('textContent').strip().split(": ")[1]
             date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M')
-            
 
             for paragraph in paragraphs:
                 try:
@@ -85,7 +84,7 @@ class Crawler_koreanTimes:
                 "title" : title,
                 "text" : text,
                 "category" :category,
-                "crawled_at" :  datetime.datetime.now(),
+                "crawled_at" :  datetime.datetime.now().timestamp(),
                 "published_at" : date.timestamp()
             }
 

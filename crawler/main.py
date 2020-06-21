@@ -53,6 +53,7 @@ class Crawler:
         self.es = None
 
     def run(self):
+        self.set_logger()
         CHROME_PATH = self.config["driver_path"]
         self.driver = webdriver.Chrome(executable_path=CHROME_PATH, chrome_options=options)
         self.wait = WebDriverWait(self.driver, 15)
@@ -116,7 +117,6 @@ class Crawler:
 
 if __name__ == "__main__":
     main = Crawler()
-    main.set_logger()
     main.run()
 
     main.close()

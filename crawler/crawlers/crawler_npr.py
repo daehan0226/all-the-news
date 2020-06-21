@@ -109,6 +109,9 @@ class Crawler_npr:
                     'div.dateblock > time'
                 ).get_attribute('datetime')
 
+                date = date.replace('T', ' ')
+
+                date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S%z')
 
                 paragraphs = content.find_elements(
                     By.CSS_SELECTOR,
@@ -133,8 +136,8 @@ class Crawler_npr:
                     "title" : title,
                     "text" : text,
                     "category" : category,
-                    "published_at" : date,
-                    "crawled_at" : datetime.datetime.now(),
+                    "published_at" : date.timestamp(),
+                    "crawled_at" : datetime.datetime.now().timestamp(),
                 }
 
                 result = self.es.insert_doc("news", article)

@@ -52,12 +52,11 @@ class Crawler_bbc:
                 By.CSS_SELECTOR,
                 'li.mini-info-list__item > div'
             ).get_attribute("data-seconds")
-        
+
             story["text"] = text
             story["site"] = "bbc"
-            story["crawled_at"] = datetime.datetime.now() # time.time()
-            story["published_at"] = date
-            doc_id = story["url"].split('/')[-1]
+            story["crawled_at"] = datetime.datetime.now().timestamp() # # time.time()
+            story["published_at"] = int(date)
 
             result = self.es.insert_doc("news",story)
             self.logging.debug("insert new doc to es, doc_id : " + result)
