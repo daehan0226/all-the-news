@@ -1,3 +1,4 @@
+import json
 from elasticsearch import Elasticsearch, client
 from elasticsearch import helpers
 
@@ -33,3 +34,12 @@ class ElasticsearchWrapper:
         print(result)
 
         return result['_id']
+    
+    def has_url_parsed(self, index, url):
+        result = self.es.search(index=index,  body={"query": {"match": { "url": url}}})
+        hits = result['hits']['hits']
+
+        if len(hits) == 0:
+            return False
+        else: 
+            return True

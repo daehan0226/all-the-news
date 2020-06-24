@@ -27,6 +27,10 @@ class Crawler_koreanTimes:
 
                     for idx, url in enumerate(urls):
                         self.logging.info(f"parsing {idx + 1} / {len(urls)}")
+                        if self.es.has_url_parsed("news", url):
+                            self.logging.info("This url has been parsed.")
+                            continue
+
                         self.get_article_data(url, category[0])   # es에 저장하면서 이미 있는 데이터에서 break
 
                     page += 1

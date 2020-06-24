@@ -33,6 +33,11 @@ class Crawler_npr:
                 article_urls = self.get_article_urls(parsed_urls, page_count)
 
                 for article_url in article_urls:
+
+                    if self.es.has_url_parsed("news", article_url):
+                        self.logging.info("This url has been parsed.")
+                        continue
+
                     self.get_article_data(article_url, category)
                     parsed_urls.append(article_url)
                     self.logging.info(f"parsed articles count : {len(parsed_urls)}")

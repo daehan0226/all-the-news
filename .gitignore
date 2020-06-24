@@ -17,3 +17,8 @@ libs
 #
 _pycahe_
 *.pyc
+
+
+
+#config
+config/

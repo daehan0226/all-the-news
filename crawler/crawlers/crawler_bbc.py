@@ -28,6 +28,10 @@ class Crawler_bbc:
             self.logging.info("parsing title, summary of top stories takes : " + str(end_time - start_time))
 
             for story in stories:
+                if self.es.has_url_parsed("news", story["url"]):
+                    self.logging.info("This url has been parsed.")
+                    continue
+
                 story["category"] = category or "top"
                 start_time = time.time()
                 self.get_story_text(story)
