@@ -31,8 +31,6 @@ class ElasticsearchWrapper:
 
     def insert_doc(self, index, body):
         result = self.es.index(index, body)
-        print(result)
-
         return result['_id']
     
     def has_url_parsed(self, index, url):

@@ -21,8 +21,8 @@ class Crawler_koreanTimes:
                     current_page = f"{self.url}{category[1]}_{page}.html"
                     self.logging.info(f"current article list page : {current_page}")
 
-                    time.sleep(uniform(1, 2))
                     self.driver.get(current_page)
+                    time.sleep(uniform(1, 2))
                     urls = self.get_news_urls()
 
                     for idx, url in enumerate(urls):
@@ -41,7 +41,7 @@ class Crawler_koreanTimes:
 
 
     def get_article_data(self, url, category):
-        text = ""
+        content = ""
 
         time.sleep(uniform(1, 2))
         self.driver.get(url)
@@ -73,7 +73,7 @@ class Crawler_koreanTimes:
 
             for paragraph in paragraphs:
                 try:
-                    text += paragraph.get_attribute('textContent').strip()
+                    content += paragraph.get_attribute('textContent').strip()
                 except:
                     print("this element does not have text")   
 
@@ -81,12 +81,12 @@ class Crawler_koreanTimes:
             _, _, tb = sys.exc_info()
             self.logging.error(f'parse article excpet from url : {url},  {tb.tb_lineno},  {e.__str__()}')
 
-        if title and text:
+        if title and content:
             article = {
                 "site" : "koreaTimes",
                 "url" : url,
                 "title" : title,
-                "text" : text,
+                "content" : content,
                 "category" :category,
                 "crawled_at" :  datetime.datetime.now().timestamp(),
                 "published_at" : date.timestamp()

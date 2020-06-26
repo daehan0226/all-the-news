@@ -95,7 +95,7 @@ class Crawler_npr:
         self.driver.get(url)
         time.sleep(uniform(2, 3))
         title = ""
-        text = ""
+        content = ""
 
         try:
             content = self.wait.until(EC.presence_of_element_located((
@@ -125,7 +125,7 @@ class Crawler_npr:
 
                 for paragraph in paragraphs:
                     try:
-                        text += paragraph.get_attribute('textContent').strip()
+                        content += paragraph.get_attribute('textContent').strip()
                     except:
                         print("this element does not have text")     
 
@@ -134,12 +134,12 @@ class Crawler_npr:
                 print(e)
                 self.logging.error('get article text except ' + str(tb.tb_lineno) + ', ' + e.__str__())
         
-            if title and text:
+            if title and content:
                 article = {
                     "site" : "npr",
                     "url" : url,
                     "title" : title,
-                    "text" : text,
+                    "content" : content,
                     "category" : category,
                     "published_at" : date.timestamp(),
                     "crawled_at" : datetime.datetime.now().timestamp(),
