@@ -4,14 +4,14 @@ from random import uniform
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-class Crawler_koreanTimes:
-    def __init__(self, driver, wait, logging, es, site):
-        self.driver = driver
-        self.wait = wait
-        self.logging = logging
-        self.es = es
-        self.url = site[1]
-        self.categories = site[2]
+class Crawler_koreantimes:
+    def __init__(self, main, site):
+        self.driver = main["driver"]
+        self.wait = main["wait"]
+        self.logging = main["logging"]
+        self.es = main["es"]
+        self.url = site[0]
+        self.categories = site[1]
 
     def parse(self):
         for category in self.categories:
@@ -41,7 +41,15 @@ class Crawler_koreanTimes:
 
 
     def get_article_data(self, url, category):
+        title = ""
         content = ""
+        date = ""
+
+        news_content_el = 'div.all_section'
+
+        title_el = 'div.view_headline'
+        para_el = 'div.view_article > div > div > div#startts > span'
+        date_el = 'div.date_div > div.view_date'
 
         time.sleep(uniform(1, 2))
         self.driver.get(url)
@@ -49,23 +57,23 @@ class Crawler_koreanTimes:
 
         news_content = self.wait.until(EC.presence_of_element_located((
                 By.CSS_SELECTOR,
-                'div.all_section'
+                news_content_el
             )))
         
         try:
             title = news_content.find_element(
                 By.CSS_SELECTOR,
-                'div.view_headline'
+                title_el
             ).get_attribute('textContent').strip()
 
             paragraphs = news_content.find_elements(
                 By.CSS_SELECTOR,
-                'div.view_article > div > div > div#startts > span'
+                para_el
             )
 
             date = news_content.find_elements(
                 By.CSS_SELECTOR,
-                'div.date_div > div.view_date'
+                date_el
             )
 
             date = date[0].get_attribute('textContent').strip().split(": ")[1]
@@ -83,7 +91,7 @@ class Crawler_koreanTimes:
 
         if title and content:
             article = {
-                "site" : "koreaTimes",
+                "site" : "koreatimes",
                 "url" : url,
                 "title" : title,
                 "content" : content,
@@ -97,14 +105,15 @@ class Crawler_koreanTimes:
         else:
             self.logging.error(f'fail to parse article data from this url, {url}')
 
-
     def get_news_urls(self):
         time.sleep(uniform(1, 2))
         urls = []
 
+        news_list_el = 'div.section_main_left > div.list_article_area'
+
         news_list = self.wait.until(EC.presence_of_all_elements_located((
             By.CSS_SELECTOR,
-            'div.section_main_left > div.list_article_area'
+            news_list_el
         ))) 
 
         for news in news_list:

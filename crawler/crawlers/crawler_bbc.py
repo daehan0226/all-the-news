@@ -6,13 +6,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 class Crawler_bbc:
-    def __init__(self, driver, wait, logging, es, site):
-        self.driver = driver
-        self.wait = wait
-        self.logging = logging
-        self.es = es
-        self.url = site[1]
-        self.categories = site[2]
+    def __init__(self, main, site):
+        self.driver = main["driver"]
+        self.wait = main["wait"]
+        self.logging = main["logging"]
+        self.es = main["es"]
+        self.url = site[0]
+        self.categories = site[1]
 
     def parse(self):
         for category in self.categories:
@@ -30,7 +30,8 @@ class Crawler_bbc:
                     self.driver.get(parse_url)
                     time.sleep(uniform(2, 3))
                     
-                    self.click_more_btn(page)
+                    if not self.click_more_btn(page):
+                        break
 
                     urls = self.get_news_urls(category, parsed_urls)
                     self.logging.info(f"current page : {page}, parsed urls count : {len(parsed_urls)}")
@@ -66,10 +67,13 @@ class Crawler_bbc:
                 self.driver.find_element_by_css_selector('button.lx-stream-show-more__button').click()
                 time.sleep(uniform(2, 3))
                 click_cnt -= 1
+            
+            return True
 
         except Exception as e:
-                _, _, tb = sys.exc_info()
-                self.logging.debug(f'click more btn except,  {tb.tb_lineno},  {e.__str__()}')
+            _, _, tb = sys.exc_info()
+            self.logging.debug(f'click more btn except,  {tb.tb_lineno},  {e.__str__()}')
+            return False
     
     def parse_article(self, url, category):
         self.driver.get(url)
@@ -162,7 +166,7 @@ class Crawler_bbc:
 
                     # self.url = "https://www.bbc.com/news/" // is a base_url for news
                     if not url.startswith(self.url):
-                        print('diffent category, url : ', url)
+                        # print('diffent category, url : ', url)
                         continue
 
                     if not url in parsed_urls:

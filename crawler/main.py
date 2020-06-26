@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from libs.elasticsearch_wrapper import ElasticsearchWrapper
 from crawlers.crawler_bbc import Crawler_bbc
 from crawlers.crawler_cnn import Crawler_cnn
-from crawlers.crawler_koreaTimes import Crawler_koreanTimes
+from crawlers.crawler_koreatimes import Crawler_koreantimes
 from crawlers.crawler_npr import Crawler_npr
 
 json_config = open("./config/config.json").read()
@@ -52,8 +52,7 @@ class Crawler:
         self.wait = None
         self.es = None
 
-    def run(self):
-        self.set_logger()
+    def run(self, site):
         CHROME_PATH = self.config["driver_path"]
         self.driver = webdriver.Chrome(executable_path=CHROME_PATH, chrome_options=options)
         self.wait = WebDriverWait(self.driver, 15)
@@ -63,39 +62,44 @@ class Crawler:
         mappings = self.config["news"]["mappings"]
         
         if not self.es.exist_index(news_index):
-            self.logging.debug(f"index - {news_index} does not exist")
+            # self.logging.debug(f"index - {news_index} does not exist")
             self.es.create_index(news_index, mappings)
 
-        for site in self.config["sites"]:
-            start_time = time.time()
-            self.logging.info("parsing started for this site, " + site[0])
+        start_time = time.time()
 
-            # if site[0] == "bbc":
-            #     cralwer = Crawler_bbc(self.driver, self.wait, self.logging, self.es, site)
-            #     cralwer.parse()
+        self.set_logger(site)
+        self.logging.info("parsing started for this site, " + site)
 
-            # if site[0] == "cnn":
-            #     cralwer = Crawler_cnn(self.driver, self.wait, self.logging, self.es, site)
-            #     cralwer.parse()
+        main = {
+            "driver": self.driver,
+            "wait": self.wait,
+            "logging": self.logging,
+            "es": self.es
+        }
+
+        if site == "bbc":
+            cralwer = Crawler_bbc(main, config["sites"]["bbc"])
+
+        if site== "cnn":
+            cralwer = Crawler_cnn(main, config["sites"]["cnn"])
+        
+        if site == "koreatimes":
+            cralwer = Crawler_koreantimes(main, config["sites"]["koreatimes"])
             
-            if site[0] == "koreatimes":
-                cralwer = Crawler_koreanTimes(self.driver, self.wait, self.logging, self.es, site)
-                cralwer.parse()
-
-            # if site[0] == "npr":
-            #     cralwer = Crawler_npr(self.driver, self.wait, self.logging, self.es, site)
-            #     cralwer.parse()
+        if site == "npr":
+            cralwer = Crawler_npr(main, config["sites"]["npr"])
             
-            end_time = time.time()
-            self.logging.debug("parsing finished, parsing time : " + str(end_time - start_time))
+        cralwer.parse()
+        end_time = time.time()
+        self.logging.debug(f"site : {site} parsing finished, parsing time : {end_time - start_time}")
 
-    def set_logger(self):
+    def set_logger(self, site):
         log_file_max_bytes = 1024 * 1024 * 100
 
         self.logging = logging.getLogger('crawl_log')
         fomatter = logging.Formatter('[%(levelname)s] %(asctime)s > %(message)s')
 
-        file_handler = logging.handlers.RotatingFileHandler(filename=self.config["log_dir"] + self.config["log_filename"], maxBytes=log_file_max_bytes,
+        file_handler = logging.handlers.RotatingFileHandler(filename=f'{self.config["log_dir"] + self.config["log_filename"]}_{site}', maxBytes=log_file_max_bytes,
                                                     encoding='utf-8')
 
         # 각 핸들러에 포매터를 지정한다.
@@ -116,7 +120,12 @@ class Crawler:
                 pass
 
 if __name__ == "__main__":
+    try:
+        site = sys.argv[1]
+    except:
+        site = 'bbc'   # bbc, cnn, npr, koreatimes
+
     main = Crawler()
-    main.run()
+    main.run(site)
 
     main.close()

@@ -5,13 +5,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 class Crawler_npr:
-    def __init__(self, driver, wait, logging, es, site):
-        self.driver = driver
-        self.wait = wait
-        self.logging = logging
-        self.es = es
-        self.url = site[1]
-        self.categories = site[2]
+    def __init__(self, main, site):
+        self.driver = main["driver"]
+        self.wait = main["wait"]
+        self.logging = main["logging"]
+        self.es = main["es"]
+        self.url = site[0]
+        self.categories = site[1]
 
     def parse(self):
         for category in self.categories:
@@ -98,18 +98,18 @@ class Crawler_npr:
         content = ""
 
         try:
-            content = self.wait.until(EC.presence_of_element_located((
+            news_container = self.wait.until(EC.presence_of_element_located((
                 By.CSS_SELECTOR,
                 'section#main-section > article.story'
             )))
 
             try:
-                title = content.find_element(
+                title = news_container.find_element(
                     By.CSS_SELECTOR,
                     'div.storytitle > h1'
                 ).get_attribute('textContent').strip()
 
-                date = content.find_element(
+                date = news_container.find_element(
                     By.CSS_SELECTOR,
                     'div.dateblock > time'
                 ).get_attribute('datetime')
@@ -118,7 +118,7 @@ class Crawler_npr:
 
                 date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S%z')
 
-                paragraphs = content.find_elements(
+                paragraphs = news_container.find_elements(
                     By.CSS_SELECTOR,
                     'article.story > div#storytext > p'
                 )
