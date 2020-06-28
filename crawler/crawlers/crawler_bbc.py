@@ -1,6 +1,8 @@
 import time, sys
 from datetime import datetime
 from random import uniform
+import random
+
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -13,49 +15,52 @@ class Crawler_bbc:
         self.es = main["es"]
         self.url = site[0]
         self.categories = site[1]
+        self.category = main["category"]
 
     def parse(self):
-        for category in self.categories:
-            try:
-                parse_url = self.url + category
-                self.logging.debug("parsing started from this url : " + parse_url)
+        if self.category == "":
+            self.category = random.choice(self.categories)
+
+        try:
+            parse_url = self.url + category
+            self.logging.debug("parsing started from this url : " + parse_url)
+            self.driver.get(parse_url)
+
+            parsed_urls = []
+
+            page = 0
+            click_cnt = 0
+
+            while True:
                 self.driver.get(parse_url)
+                time.sleep(uniform(2, 3))
+                
+                if not self.click_more_btn(page):
+                    break
 
-                parsed_urls = []
+                urls = self.get_news_urls(category, parsed_urls)
+                self.logging.info(f"current page : {page}, parsed urls count : {len(parsed_urls)}")
 
-                page = 0
-                click_cnt = 0
+                for idx, url in enumerate(urls):
+                    self.logging.info(f"parsing {idx + 1} / {len(urls)}")
 
-                while True:
-                    self.driver.get(parse_url)
-                    time.sleep(uniform(2, 3))
+                    if self.es.has_url_parsed("news", url):
+                        self.logging.info("This url has been parsed.")
+                        continue
+
+                    article = self.parse_article(url, category)
                     
-                    if not self.click_more_btn(page):
-                        break
+                    if article:
+                        result = self.upload_article(article)
 
-                    urls = self.get_news_urls(category, parsed_urls)
-                    self.logging.info(f"current page : {page}, parsed urls count : {len(parsed_urls)}")
+                        if result:
+                            parsed_urls.append(url)
+                
+                page += 1
 
-                    for idx, url in enumerate(urls):
-                        self.logging.info(f"parsing {idx + 1} / {len(urls)}")
-
-                        if self.es.has_url_parsed("news", url):
-                            self.logging.info("This url has been parsed.")
-                            continue
-
-                        article = self.parse_article(url, category)
-                        
-                        if article:
-                            result = self.upload_article(article)
-
-                            if result:
-                                parsed_urls.append(url)
-                    
-                    page += 1
-
-            except Exception as e:
-                _, _, tb = sys.exc_info()
-                self.logging.error(f'parse except,  {tb.tb_lineno},  {e.__str__()}')
+        except Exception as e:
+            _, _, tb = sys.exc_info()
+            self.logging.error(f'parse except,  {tb.tb_lineno},  {e.__str__()}')
     
     def click_more_btn(self, click_cnt):
         try:  

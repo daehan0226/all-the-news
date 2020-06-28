@@ -52,7 +52,7 @@ class Crawler:
         self.wait = None
         self.es = None
 
-    def run(self, site):
+    def run(self, site, category):
         CHROME_PATH = self.config["driver_path"]
         self.driver = webdriver.Chrome(executable_path=CHROME_PATH, chrome_options=options)
         self.wait = WebDriverWait(self.driver, 15)
@@ -74,14 +74,15 @@ class Crawler:
             "driver": self.driver,
             "wait": self.wait,
             "logging": self.logging,
-            "es": self.es
+            "es": self.es,
+            "category": category
         }
 
         if site == "bbc":
             cralwer = Crawler_bbc(main, config["sites"]["bbc"])
 
-        if site== "cnn":
-            cralwer = Crawler_cnn(main, config["sites"]["cnn"])
+        # if site== "cnn":
+        #     cralwer = Crawler_cnn(main, config["sites"]["cnn"])
         
         if site == "koreatimes":
             cralwer = Crawler_koreantimes(main, config["sites"]["koreatimes"])
@@ -124,8 +125,14 @@ if __name__ == "__main__":
         site = sys.argv[1]
     except:
         site = 'bbc'   # bbc, cnn, npr, koreatimes
+        
+    try:
+        category = sys.argv[2]
+    except:
+        category = ''
 
-    main = Crawler()
-    main.run(site)
 
-    main.close()
+    service = Crawler()
+    service.run(site, category)
+
+    service.close()
