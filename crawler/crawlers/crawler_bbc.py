@@ -22,7 +22,7 @@ class Crawler_bbc:
             self.category = random.choice(self.categories)
 
         try:
-            parse_url = self.url + category
+            parse_url = self.url + self.category
             self.logging.debug("parsing started from this url : " + parse_url)
             self.driver.get(parse_url)
 
@@ -38,7 +38,7 @@ class Crawler_bbc:
                 if not self.click_more_btn(page):
                     break
 
-                urls = self.get_news_urls(category, parsed_urls)
+                urls = self.get_news_urls(parsed_urls)
                 self.logging.info(f"current page : {page}, parsed urls count : {len(parsed_urls)}")
 
                 for idx, url in enumerate(urls):
@@ -48,7 +48,7 @@ class Crawler_bbc:
                         self.logging.info("This url has been parsed.")
                         continue
 
-                    article = self.parse_article(url, category)
+                    article = self.parse_article(url)
                     
                     if article:
                         result = self.upload_article(article)
@@ -80,7 +80,7 @@ class Crawler_bbc:
             self.logging.debug(f'click more btn except,  {tb.tb_lineno},  {e.__str__()}')
             return False
     
-    def parse_article(self, url, category):
+    def parse_article(self, url):
         self.driver.get(url)
         time.sleep(uniform(3, 4))
         title = ""
@@ -129,7 +129,7 @@ class Crawler_bbc:
                 "title": title,
                 "content": content,
                 "published_at": int(date),
-                "category": category,
+                "category": self.category,
                 "url": self.driver.current_url
             }
 
@@ -152,7 +152,7 @@ class Crawler_bbc:
         except:
             return False
 
-    def get_news_urls(self, category, parsed_urls):
+    def get_news_urls(self, parsed_urls):
         time.sleep(uniform(1, 2))
         urls = []
 
@@ -171,7 +171,7 @@ class Crawler_bbc:
 
                     # self.url = "https://www.bbc.com/news/" // is a base_url for news
                     if not url.startswith(self.url):
-                        # print('diffent category, url : ', url)
+                        # print('diffent self.category, url : ', url)
                         continue
 
                     if not url in parsed_urls:
@@ -180,7 +180,7 @@ class Crawler_bbc:
                 except:
                     pass
                     # short article - does not have an article page.
-                    # self.parse_short_article(news, category)
+                    # self.parse_short_article(news)
                     # print('short article')
 
         except Exception as e:
@@ -189,7 +189,7 @@ class Crawler_bbc:
         
         return urls
 
-    # def parse_short_article(self, news, category):
+    # def parse_short_article(self, news):
     #     title = ""
     #     content = ""
     #     date = ""
@@ -244,7 +244,7 @@ class Crawler_bbc:
     #             self.logging.error('get short article time except ' + str(tb.tb_lineno) + ', ' + e.__str__())
 
     #         date = f"2020 {date} {time}"
-    #         print(title, content, category)
+    #         print(title, content, self.category)
     #         print(date)
     #         date = datetime.strptime(date, '%Y %d %B %H:%M')
 
@@ -252,7 +252,7 @@ class Crawler_bbc:
     #             "title": title,
     #             "content": content,
     #             "published_at": date.timestamp(),
-    #             "category": category,
+    #             "category": self.category,
     #             "url": self.driver.current_url + title
     #         }
 

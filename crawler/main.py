@@ -43,8 +43,12 @@ options.add_argument('--start-maximized')
 options.add_argument(
     "user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36")
-options.add_argument('--no-sandbox')
-options.add_argument('--headless')
+
+CHROME_PATH = config["driver_path"]
+if config["server"]:
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    CHROME_PATH = config["driver_path_server"]
 
 class Crawler:
     def __init__(self):
@@ -55,8 +59,7 @@ class Crawler:
         self.es = None
 
     def run(self, site, category):
-        CHROME_PATH = self.config["driver_path"]
-        self.driver = webdriver.Chrome(executable_path="/usr/bin/chromedriver", chrome_options=options)
+        self.driver = webdriver.Chrome(executable_path=CHROME_PATH, chrome_options=options)
         self.wait = WebDriverWait(self.driver, 15)
         self.es = ElasticsearchWrapper(self.config)
 

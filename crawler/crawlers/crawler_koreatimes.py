@@ -1,5 +1,6 @@
 import time, sys, datetime
 from random import uniform
+import random
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -12,35 +13,38 @@ class Crawler_koreantimes:
         self.es = main["es"]
         self.url = site[0]
         self.categories = site[1]
+        self.category = main["category"]
 
     def parse(self):
-        for category in self.categories:
-            try:
-                page = 1
-                while True:
-                    current_page = f"{self.url}{category[1]}_{page}.html"
-                    self.logging.info(f"current article list page : {current_page}")
+        if self.category == "":
+            self.category = random.choice(list(self.categories.keys()))
 
-                    self.driver.get(current_page)
-                    time.sleep(uniform(1, 2))
-                    urls = self.get_news_urls()
+        try:
+            page = 1
+            while True:
+                current_page = f"{self.url}{self.categories[self.category]}_{page}.html"
+                self.logging.info(f"current article list page : {current_page}")
 
-                    for idx, url in enumerate(urls):
-                        self.logging.info(f"parsing {idx + 1} / {len(urls)}")
-                        if self.es.has_url_parsed("news", url):
-                            self.logging.info("This url has been parsed.")
-                            continue
+                self.driver.get(current_page)
+                time.sleep(uniform(1, 2))
+                urls = self.get_news_urls()
 
-                        self.get_article_data(url, category[1])   # es에 저장하면서 이미 있는 데이터에서 break
+                for idx, url in enumerate(urls):
+                    self.logging.info(f"parsing {idx + 1} / {len(urls)}")
+                    if self.es.has_url_parsed("news", url):
+                        self.logging.info("This url has been parsed.")
+                        continue
 
-                    page += 1
-                    
-            except Exception as e:
-                _, _, tb = sys.exc_info()
-                self.logging.error(f'parse except,  {tb.tb_lineno},  {e.__str__()}')
+                    self.get_article_data(url)   # es에 저장하면서 이미 있는 데이터에서 break
+
+                page += 1
+                
+        except Exception as e:
+            _, _, tb = sys.exc_info()
+            self.logging.error(f'parse except,  {tb.tb_lineno},  {e.__str__()}')
 
 
-    def get_article_data(self, url, category):
+    def get_article_data(self, url):
         title = ""
         content = ""
         date = ""
@@ -95,7 +99,7 @@ class Crawler_koreantimes:
                 "url" : url,
                 "title" : title,
                 "content" : content,
-                "category" :category,
+                "category" : self.category,
                 "crawled_at" :  datetime.datetime.now().timestamp(),
                 "published_at" : date.timestamp()
             }
