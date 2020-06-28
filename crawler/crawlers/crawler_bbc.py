@@ -15,7 +15,9 @@ class Crawler_bbc:
         self.categories = site[1]
 
     def parse(self):
+        self.categories = self.categories[4:]
         for category in self.categories:
+            print(category)
             try:
                 parse_url = self.url + category
                 self.logging.debug("parsing started from this url : " + parse_url)
