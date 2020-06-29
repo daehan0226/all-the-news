@@ -1,5 +1,6 @@
 import time, sys, datetime
 from random import uniform
+import random
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -12,10 +13,14 @@ class Crawler_npr:
         self.es = main["es"]
         self.url = site[0]
         self.categories = site[1]
+        self.category = main["category"]
 
     def parse(self):
-        for category in self.categories:
-            site_url = self.url + category
+        if self.category == "":
+            self.category = random.choice(self.categories)
+            
+        try:
+            site_url = self.url + self.category
             self.logging.info(f"parsing started from this url : {site_url}")
             
             page_count = 1
@@ -38,11 +43,15 @@ class Crawler_npr:
                         self.logging.info("This url has been parsed.")
                         continue
 
-                    self.get_article_data(article_url, category)
+                    self.get_article_data(article_url)
                     parsed_urls.append(article_url)
                     self.logging.info(f"parsed articles count : {len(parsed_urls)}")
 
                 page_count += 1
+        except Exception as e:
+            _, _, tb = sys.exc_info()
+            self.logging.error(f'parse except,  {tb.tb_lineno},  {e.__str__()}')
+    
                 
 
     def click_more_btn(self):
@@ -91,7 +100,7 @@ class Crawler_npr:
                 self.logging.debug('could not parse any urls(same urls)')
             return urls
     
-    def get_article_data(self, url, category):
+    def get_article_data(self, url):
         self.driver.get(url)
         time.sleep(uniform(2, 3))
         title = ""
@@ -140,7 +149,7 @@ class Crawler_npr:
                     "url" : url,
                     "title" : title,
                     "content" : content,
-                    "category" : category,
+                    "category" : self.category,
                     "published_at" : date.timestamp(),
                     "crawled_at" : datetime.datetime.now().timestamp(),
                 }
