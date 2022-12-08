@@ -1,4 +1,4 @@
-certifi==2020.4.5.1
+certifi==2022.12.7
 elasticsearch==7.7.0
 selenium==3.141.0
 simplejson==3.17.0
